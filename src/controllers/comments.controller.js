@@ -10,7 +10,7 @@ export function listComments(req, res) {
     WHERE t.id = ? AND tm.user_id = ?
   `).get(taskId, req.user.id);
   if (!membership) return res.status(403).json({ error: 'Not authorized to view comments for this task' });
-  const rows = db.prepare('SELECT c.*, u.name as author_name FROM comments c JOIN users u ON u.id = c.user_id WHERE task_id = ? ORDER BY c.created_at ASC').all(taskId);
+  const rows = db.prepare('SELECT c.*, u.name as user_name FROM comments c JOIN users u ON u.id = c.user_id WHERE task_id = ? ORDER BY c.created_at ASC').all(taskId);
   res.json(rows);
 }
 
@@ -25,6 +25,6 @@ export function createComment(req, res) {
   `).get(taskId, req.user.id);
   if (!membership) return res.status(403).json({ error: 'Not authorized to comment on this task' });
   const info = db.prepare('INSERT INTO comments (task_id, user_id, body) VALUES (?,?,?)').run(taskId, req.user.id, body);
-  const row = db.prepare('SELECT * FROM comments WHERE id = ?').get(info.lastInsertRowid);
+  const row = db.prepare('SELECT c.*, u.name as user_name FROM comments c JOIN users u ON u.id = c.user_id WHERE c.id = ?').get(info.lastInsertRowid);
   res.status(201).json(row);
 }

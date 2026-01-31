@@ -14,7 +14,7 @@ import commentsRouter from './src/routes/comments.js';
 const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: '*'}));
+app.use(cors({ origin: 'https://angularproject-jkks.onrender.com' }));
 app.use(express.json());
 app.use(morgan('dev'));
 
